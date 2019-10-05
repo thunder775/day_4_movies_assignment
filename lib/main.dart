@@ -1,6 +1,7 @@
 import 'package:day_4_movies_assignment/movies.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:carousel_slider/carousel_slider.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -23,12 +24,15 @@ class poster extends StatefulWidget {
 
 class _posterState extends State<poster> {
   List movies = jsonDecode(moviesList);
-  int i =0;
+ 
+  int i = 0;
 
-  void next() {
-    setState(() {
-      i += 1;
-    });
+  List generator(List x){
+    List temp = [];
+    for(int i =0;i <x.length;i++){
+      temp.add(x[i]['poster']);
+    }
+    return temp;
   }
 
   @override
@@ -42,36 +46,23 @@ class _posterState extends State<poster> {
         ),
         backgroundColor: Colors.yellow,
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 88.0, right: 88, top: 80, bottom: 56),
-                child: Image(
-                  image: NetworkImage(movies[i]['poster']),
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-            flex: 2,
-          ),
-          Expanded(
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      bottom: 160, left: 125, right: 125, top: 20),
-                  child: RaisedButton(
-                    child: Center(child: Text('Next Movie')),
-                    color: Colors.yellow,
-                    onPressed: next,
+      body: CarouselSlider(
+        height: 400.0,
+        items: generator(movies).map((i) {
+          return Builder(
+            builder: (BuildContext context) {
+              return Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: EdgeInsets.symmetric(horizontal: 30.0),
+                  decoration: BoxDecoration(
+                      color: Colors.amber
                   ),
-                ),
-              ),
-              flex: 1),
-        ],
-      ), // Use stateful widget you created here
+                  child: Image(image: NetworkImage(i),)
+              );
+            },
+          );
+        }).toList(),
+      ) // Use stateful widget you created here
     );
   }
 }
